@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Vice-Doyen • Analyse Stratégique</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.0.0/dist/css/coreui.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/icons/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  
+  <style>
+    body { 
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                  url('https://images.unsplash.com/photo-1523050853021-ea9e12a06ce5?auto=format&fit=crop&q=80&w=2000'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: white;
+    }
+
+    .header { 
+      background: rgba(255, 255, 255, 0.1) !important; 
+      backdrop-filter: blur(15px); 
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .custom-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 15px;
+      color: #2c3e50;
+    }
+
+    .kpi-card {
+      border: none;
+      border-radius: 12px;
+      transition: transform 0.2s;
+    }
+
+    .kpi-card:hover { transform: translateY(-5px); }
+
+    .btn-back { color: white; text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <header class="header header-sticky mb-4 p-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <a href="../index.html" class="btn-back me-3"><i class="cil-arrow-left"></i> Retour</a>
+        <div class="fw-bold text-uppercase border-start ps-3" style="letter-spacing: 1px;">
+          Analyse Stratégique
+        </div>
+      </div>
+      <div class="badge rounded-pill bg-danger px-3 py-2">Administration Centrale</div>
+    </div>
+  </header>
+
+  <div class="container pb-5">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label small text-white opacity-75">Session (Période)</label>
+        <select id="periode" class="form-select"></select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button id="refresh" class="btn btn-primary">Actualiser</button>
+      </div>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <div class="card kpi-card bg-primary text-white p-3">
+          <div class="small text-uppercase opacity-75">Examens Planifiés</div>
+          <div class="fs-2 fw-bold" id="k1">—</div>
+          <div class="small mt-2"><i class="cil-check-circle"></i> Statut complet</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card bg-success text-white p-3">
+          <div class="small text-uppercase opacity-75">Fusions (Amphis)</div>
+          <div class="fs-2 fw-bold" id="k2">—</div>
+          <div class="small mt-2" id="k2-pct">0% du total</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card bg-warning text-dark p-3">
+          <div class="small text-uppercase opacity-75">Groupes Divisés</div>
+          <div class="fs-2 fw-bold" id="k3">—</div>
+          <div class="small mt-2" id="k3-pct">0% d'ajustement</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card kpi-card bg-info text-white p-3">
+          <div class="small text-uppercase opacity-75">Corps Enseignant</div>
+          <div class="fs-2 fw-bold" id="k4">—</div>
+          <div class="small mt-2">Disponibilité totale</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card custom-card shadow h-100">
+          <div class="card-header bg-transparent border-0 pt-3 px-4">
+            <h5 class="fw-bold mb-0">Types de Salles</h5>
+            <small class="text-muted">Répartition de l'utilisation</small>
+          </div>
+          <div class="card-body">
+            <canvas id="roomChart" style="max-height:250px;"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card custom-card shadow h-100">
+          <div class="card-header bg-transparent border-0 pt-3 px-4">
+            <h5 class="fw-bold mb-0">Gestion des Groupes</h5>
+            <small class="text-muted">Analyse Fusion vs Division</small>
+          </div>
+          <div class="card-body">
+            <canvas id="groupChart" style="max-height:250px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card custom-card shadow">
+          <div class="card-header bg-transparent border-0 pt-3 px-4">
+            <h5 class="fw-bold mb-0">Charge de Travail Enseignants</h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive" style="max-height:300px;">
+              <table class="table table-hover small">
+                <thead class="table-light">
+                  <tr><th>Professeur</th><th>Dépt</th><th>Surveillances</th></tr>
+                </thead>
+                <tbody id="profLoad"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="card custom-card shadow border-top border-danger border-4">
+          <div class="card-header bg-transparent border-0 pt-3 px-4 text-danger">
+            <h5 class="fw-bold mb-0">🚨 Alertes & Conflits</h5>
+          </div>
+          <div class="card-body">
+            <div id="msg" class="alert alert-light py-1 small mb-2 text-center border">Chargement...</div>
+            <div class="table-responsive">
+              <table class="table table-sm small">
+                <thead><tr><th>Prof</th><th>Date</th><th>Conflits</th></tr></thead>
+                <tbody id="conf"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../assets/js/dashboard.js"></script>
+</body>
+</html> 
