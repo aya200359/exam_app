@@ -102,3 +102,6 @@ Notes
 - I could not create the branch/PR from this environment because the workspace is not a git repository connected to a remote. Please run the commands above in your local repo—I included `PR_DESCRIPTION.md` so you can use it as the PR body.
 
 If you'd like, I can also prepare unit test scripts (pytest) or SQL-based checks to include in the PR.
+
+UI behavior note (short)
+- The dashboard defaults to the global view (no periode selected). Selecting a periode in the UI is optional and will filter KPIs/charts/tables when explicitly chosen. The API endpoints and calculations already support `periode_id` and are working correctly; this change only affects client-side display behavior.
