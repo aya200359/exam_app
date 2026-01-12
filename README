@@ -181,3 +181,4 @@ python -m api.app_api
 ## Author / Project Context
 
 This project was developed as part of an **academic exam timetabling system**, focusing on automation, conflict detection, and role-based access (manager, student, professor).
+"QA checklist validated." 
